@@ -25,6 +25,11 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Verify Application
+      - name: Verify Application Syntax
         run: |
           python -m py_compile app.py
+
+      - name: SonarQube Scan
+        uses: SonarSource/sonarqube-scan-action@master
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }} 
