@@ -55,3 +55,8 @@ jobs:
           exit-code: '0'
           ignore-unfixed: true
           severity: 'CRITICAL,HIGH'
+
+      - name: Run Checkov IaC Scan
+        uses: bridgecrewio/checkov-action@master
+        with:
+          directory: terraform
