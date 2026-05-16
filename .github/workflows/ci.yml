@@ -61,3 +61,24 @@ jobs:
         with:
           directory: terraform
         continue-on-error: true 
+      
+      - name: Deploy to EC2
+
+        uses: appleboy/ssh-action@master
+
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+
+          script: |
+
+            cd /home/ubuntu/secure-devsecops-pipeline
+
+            sudo docker stop $(sudo docker ps -q) || true
+
+            sudo docker rm $(sudo docker ps -aq) || true
+
+            sudo docker build -t secure-devsecops-app .
+
+            sudo docker run -d -p 5001:5001 secure-devsecops-app

@@ -32,7 +32,9 @@ resource "aws_instance" "devsecops_server" {
 
   ami           = "ami-0f58b397bc5c1f2e8"
 
-  instance_type = "t2.micro"
+  instance_type = "t3.micro"
+  
+  key_name = "devsecops-key"
 
   security_groups = [aws_security_group.flask_sg.name]
 
