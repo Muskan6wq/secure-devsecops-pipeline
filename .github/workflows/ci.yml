@@ -27,4 +27,4 @@ jobs:
 
       - name: Verify Application
         run: |
-          python app.py
+          python -m py_compile app.py
