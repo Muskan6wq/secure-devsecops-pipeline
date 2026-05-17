@@ -105,11 +105,20 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
 
+         
           script: |
            
             echo "Deploying to $ENVIRONMENT environment"
+            
+            sudo apt update -y
 
-            cd /home/ubuntu/secure-devsecops-pipeline
+            sudo apt install git -y
+
+            rm -rf secure-devsecops-pipeline
+
+            git clone https://github.com/Muskan6wq/secure-devsecops-pipeline.git
+
+            cd secure-devsecops-pipeline
 
             sudo docker stop $(sudo docker ps -q) || true
 
