@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_security_group" "flask_sg" {
 
-  name = "flask-security-group"
+  name_prefix = "flask-security-group-"
 
   ingress {
     from_port   = 5001
