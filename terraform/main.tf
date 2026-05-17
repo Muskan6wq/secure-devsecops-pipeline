@@ -4,7 +4,7 @@ provider "aws" {
 
 resource "aws_security_group" "flask_sg" {
 
-  name = "flask-security-group"
+  name_prefix = "flask-security-group-"
 
   ingress {
     from_port   = 5001
@@ -20,6 +20,19 @@ resource "aws_security_group" "flask_sg" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  ingress {
+   from_port   = 5002
+   to_port     = 5002
+   protocol    = "tcp"
+   cidr_blocks = ["0.0.0.0/0"]
+ }
+
+ingress {
+  from_port   = 5003
+  to_port     = 5003
+  protocol    = "tcp"
+  cidr_blocks = ["0.0.0.0/0"]
+}
   egress {
     from_port   = 0
     to_port     = 0
@@ -43,4 +56,7 @@ resource "aws_instance" "devsecops_server" {
   }
 }
 
+output "ec2_public_ip" {
+  value = aws_instance.devsecops_server.public_ip
+}
 
