@@ -10,13 +10,10 @@ def home():
 
     <p>Application Status : Running</p>
 
-
-    <p>Environment : dev</p>
-
+    <p>Environment : Development</p>
 
     <p>Cloud Provider : AWS</p>
     """
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5001)
-
