@@ -11,9 +11,7 @@ def home():
     <p>Application Status : Running</p>
 
 <<<<<<< HEAD
-    <p>Environment : dev </p>
-=======
-    <p>Environment : Staging</p>
+    <p>Environment : dev</p>
 >>>>>>> main
 
     <p>Cloud Provider : AWS</p>
