@@ -129,10 +129,21 @@ jobs:
 
             cd secure-devsecops-pipeline
 
-            sudo docker stop $(sudo docker ps -q) || true
-
-            sudo docker rm $(sudo docker ps -aq) || true
+            sudo docker rm -f $ENVIRONMENT-app || true
 
             sudo docker build -t secure-devsecops-app .
 
-            sudo docker run -d -p 5001:5001 secure-devsecops-app
+            if [ "$ENVIRONMENT" = "dev" ]; then
+            PORT=5001
+            elif [ "$ENVIRONMENT" = "staging" ]; then
+            PORT=5002
+            else
+            PORT=5003
+            fi
+
+            echo "Using port $PORT"
+
+            sudo docker run -d \
+              --name $ENVIRONMENT-app \
+              -p $PORT:5001 \
+              secure-devsecops-app
