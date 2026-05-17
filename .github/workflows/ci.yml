@@ -114,6 +114,12 @@ jobs:
             echo "Deploying to $ENVIRONMENT environment"
             
             sudo apt update -y
+             
+            sudo apt install docker.io -y
+ 
+            sudo systemctl start docker
+
+            sudo systemctl enable docker
 
             sudo apt install git -y
 
