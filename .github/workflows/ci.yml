@@ -111,7 +111,7 @@ jobs:
          
           script: |
            
-            echo "Deploying to $ENVIRONMENT environment"
+            echo "Deploying to ${{ github.ref_name }} environment"
             
             sudo apt update -y
              
@@ -129,13 +129,13 @@ jobs:
 
             cd secure-devsecops-pipeline
 
-            sudo docker rm -f $ENVIRONMENT-app || true
+            sudo docker rm -f ${{ github.ref_name }}-app || true
 
             sudo docker build -t secure-devsecops-app .
 
-            if [ "$ENVIRONMENT" = "dev" ]; then
+            if [ "${{ github.ref_name }}" = "dev" ]; then
             PORT=5001
-            elif [ "$ENVIRONMENT" = "staging" ]; then
+            elif [ "${{ github.ref_name }}" = "staging" ]; then
             PORT=5002
             else
             PORT=5003
@@ -144,6 +144,6 @@ jobs:
             echo "Using port $PORT"
 
             sudo docker run -d \
-              --name $ENVIRONMENT-app \
+              --name ${{ github.ref_name }}-app \
               -p $PORT:5001 \
               secure-devsecops-app
