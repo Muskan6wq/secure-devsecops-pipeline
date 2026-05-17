@@ -125,7 +125,7 @@ jobs:
 
             rm -rf secure-devsecops-pipeline
 
-            git clone https://github.com/Muskan6wq/secure-devsecops-pipeline.git
+            git clone -b ${{ github.ref_name }} https://github.com/Muskan6wq/secure-devsecops-pipeline.git
 
             cd secure-devsecops-pipeline
 
