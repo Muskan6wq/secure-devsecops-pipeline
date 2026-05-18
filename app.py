@@ -10,7 +10,7 @@ def home():
 
     <p>Application Status : Running</p>
 
-    <p>Environment : Staging</p>
+    <p>Environment : Production</p>
 
     <p>Cloud Provider : AWS</p>
     """
