@@ -3,6 +3,8 @@ name: CI Pipeline
 on:
   push:
     branches:
+      - dev
+      - staging 
       - main
 
 jobs:
@@ -67,23 +69,81 @@ jobs:
           directory: terraform
         continue-on-error: true 
       
-      - name: Deploy to EC2
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-south-1
+       
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3 
 
+      - name: Terraform Init
+        run: terraform init
+        working-directory: terraform
+
+      - name: Terraform Apply
+        run: terraform apply -auto-approve
+        working-directory: terraform
+      
+      - name: Get EC2 Public IP
+        id: terraform_output
+        run: |
+          echo "EC2_IP=$(terraform output -raw ec2_public_ip)" >> $GITHUB_ENV
+        working-directory: terraform
+        
+      - name: Wait for EC2 Initialization
+        run: sleep 90
+ 
+      - name: Deploy to EC2
+          
+        env:
+          ENVIRONMENT: ${{ github.ref_name }}
+       
         uses: appleboy/ssh-action@master
 
         with:
-          host: ${{ secrets.EC2_HOST }}
+          host: ${{ env.EC2_IP }}
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
 
+         
           script: |
+           
+            echo "Deploying to ${{ github.ref_name }} environment"
+            
+            sudo apt update -y
+             
+            sudo apt install docker.io -y
+ 
+            sudo systemctl start docker
 
-            cd /home/ubuntu/secure-devsecops-pipeline
+            sudo systemctl enable docker
 
-            sudo docker stop $(sudo docker ps -q) || true
+            sudo apt install git -y
 
-            sudo docker rm $(sudo docker ps -aq) || true
+            rm -rf secure-devsecops-pipeline
+
+            git clone https://github.com/Muskan6wq/secure-devsecops-pipeline.git
+
+            cd secure-devsecops-pipeline
+
+            sudo docker rm -f ${{ github.ref_name }}-app || true
 
             sudo docker build -t secure-devsecops-app .
 
-            sudo docker run -d -p 5001:5001 secure-devsecops-app
+            if [ "${{ github.ref_name }}" = "dev" ]; then
+            PORT=5001
+            elif [ "${{ github.ref_name }}" = "staging" ]; then
+            PORT=5002
+            else
+            PORT=5003
+            fi
+
+            echo "Using port $PORT"
+
+            sudo docker run -d \
+              --name ${{ github.ref_name }}-app \
+              -p $PORT:5001 \
+              secure-devsecops-app
